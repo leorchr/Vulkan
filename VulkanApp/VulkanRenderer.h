@@ -12,6 +12,12 @@ struct {
 	vk::Device logicalDevice;
 } mainDevice;
 
+struct MVP {
+	glm::mat4 projection;
+	glm::mat4 view;
+	glm::mat4 model;
+};
+
 class VulkanRenderer
 {
 public:
@@ -102,4 +108,19 @@ private:
 	vk::PipelineColorBlendStateCreateInfo colorBlendingCreateInfo{};
 
 	std::vector<class VulkanMesh> meshes;
+
+	MVP mvp;
+	vk::DescriptorSetLayout descriptorSetLayout;
+	void createDescriptorSetLayout();
+
+	std::vector<vk::Buffer> uniformBuffer;
+	std::vector<vk::DeviceMemory> uniformBufferMemory;
+	void createUniformBuffers();
+	
+	vk::DescriptorPool descriptorPool;
+	void createDescriptorPool();
+
+	std::vector<vk::DescriptorSet> descriptorSets;
+	void createDescriptorSets();
+	void updateUniformBuffer(uint32_t imageIndex);
 };
