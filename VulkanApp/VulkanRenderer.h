@@ -100,4 +100,6 @@ private:
 	vk::PipelineRasterizationStateCreateInfo rasterizerCreateInfo{};
 	vk::PipelineMultisampleStateCreateInfo multisamplingCreateInfo{};
 	vk::PipelineColorBlendStateCreateInfo colorBlendingCreateInfo{};
+
+	std::vector<class VulkanMesh> meshes;
 };
