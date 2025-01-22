@@ -48,7 +48,7 @@ public:
 
 	void updateModel(int modelId, glm::mat4 modelP);
 	int createMeshModel(const std::string& filename);
-	
+	void createColorBufferImage();
 
 private:
 	GLFWwindow* window;
@@ -112,7 +112,12 @@ private:
 	vk::DescriptorSetLayout samplerDescriptorSetLayout;
 	vector<vk::DescriptorSet> samplerDescriptorSets;
 	vector<VulkanMeshModel> meshModels;
+	vk::SampleCountFlagBits msaaSamples{ vk::SampleCountFlagBits::e1 };
 
+	vk::Image colorImage;
+	vk::DeviceMemory colorImageMemory;
+	vk::ImageView colorImageView;
+	
 	// Instance
 	void createInstance();
 	bool checkInstanceExtensionSupport(const vector<const char*>& checkExtensions);
@@ -170,8 +175,10 @@ private:
 	stbi_uc* loadTextureFile(const std::string& filename, int* width, int* height, vk::DeviceSize* imageSize);
 	int createTextureImage(const std::string& filename, uint32_t& mipLevels);
 	int createTexture(const std::string& filename);
-	vk::Image createImage(uint32_t width, uint32_t height, uint32_t mipLevels, vk::Format format, vk::ImageTiling tiling,
-	                      vk::ImageUsageFlags useFlags, vk::MemoryPropertyFlags propFlags, vk::DeviceMemory* imageMemory);
+	
+	vk::Image createImage(uint32_t width, uint32_t height, uint32_t mipLevels,vk::SampleCountFlagBits numSamples, vk::Format format,
+		vk::ImageTiling tiling,vk::ImageUsageFlags useFlags, vk::MemoryPropertyFlags propFlags,vk::DeviceMemory* imageMemory);
+	
 	vk::Format chooseSupportedFormat(const vector<vk::Format>& formats, vk::ImageTiling tiling, vk::FormatFeatureFlags featureFlags);
 	void createTextureSampler();
 	int createTextureDescriptor(vk::ImageView textureImageView);

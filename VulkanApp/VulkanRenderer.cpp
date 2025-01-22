@@ -27,6 +27,7 @@ int VulkanRenderer::init(GLFWwindow* windowP)
 		createDescriptorSetLayout();
 		createPushConstantRange();
 		createGraphicsPipeline();
+		createColorBufferImage();
 		createDepthBufferImage();
 		createFramebuffers();
 		createGraphicsCommandPool();
@@ -120,6 +121,10 @@ void VulkanRenderer::clean()
 		mainDevice.logicalDevice.destroyImage(textureImages[i], nullptr);
 		mainDevice.logicalDevice.freeMemory(textureImageMemory[i], nullptr);
 	}
+	mainDevice.logicalDevice.destroyImageView(colorImageView);
+	mainDevice.logicalDevice.destroyImage(colorImage);
+	mainDevice.logicalDevice.freeMemory(colorImageMemory);
+	
 	mainDevice.logicalDevice.destroyDescriptorPool(samplerDescriptorPool, nullptr);
 	mainDevice.logicalDevice.destroyDescriptorSetLayout(samplerDescriptorSetLayout, nullptr);
 	mainDevice.logicalDevice.destroySampler(textureSampler);
@@ -330,6 +335,15 @@ void VulkanRenderer::getPhysicalDevice()
 	// Get properties of our new device to know some values
 	vk::PhysicalDeviceProperties deviceProperties = mainDevice.physicalDevice.getProperties();
 	minUniformBufferOffet = deviceProperties.limits.minUniformBufferOffsetAlignment;
+	vk::SampleCountFlags counts = deviceProperties.limits.framebufferColorSampleCounts
+	& deviceProperties.limits.framebufferDepthSampleCounts;
+	if (counts & vk::SampleCountFlagBits::e64) msaaSamples = vk::SampleCountFlagBits::e64;
+	else if (counts & vk::SampleCountFlagBits::e32) msaaSamples = vk::SampleCountFlagBits::e32;
+	else if (counts & vk::SampleCountFlagBits::e16) msaaSamples = vk::SampleCountFlagBits::e16;
+	else if (counts & vk::SampleCountFlagBits::e8) msaaSamples = vk::SampleCountFlagBits::e8;
+	else if (counts & vk::SampleCountFlagBits::e4) msaaSamples = vk::SampleCountFlagBits::e4;
+	else if (counts & vk::SampleCountFlagBits::e2) msaaSamples = vk::SampleCountFlagBits::e2;
+	else msaaSamples = vk::SampleCountFlagBits::e1;
 }
 
 bool VulkanRenderer::checkDeviceSuitable(vk::PhysicalDevice device)
@@ -419,8 +433,9 @@ void VulkanRenderer::createLogicalDevice()
 	deviceCreateInfo.ppEnabledExtensionNames = deviceExtensions.data();
 	// -- Validation layers are deprecated since Vulkan 1.1
 	// Features
-	vk::PhysicalDeviceFeatures deviceFeatures {};
+	vk::PhysicalDeviceFeatures deviceFeatures{};
 	deviceFeatures.samplerAnisotropy = true;
+	deviceFeatures.sampleRateShading = true;
 	deviceCreateInfo.pEnabledFeatures = &deviceFeatures;
 
 	// Create the logical device for the given physical device
@@ -803,9 +818,10 @@ void VulkanRenderer::createGraphicsPipeline()
 	// Not for textures, only for edges
 	vk::PipelineMultisampleStateCreateInfo multisamplingCreateInfo{};
 	// Enable multisample shading or not
-	multisamplingCreateInfo.sampleShadingEnable = VK_FALSE;	
+	multisamplingCreateInfo.sampleShadingEnable = VK_TRUE;	
 	// Number of samples to use per fragment
-	multisamplingCreateInfo.rasterizationSamples = vk::SampleCountFlagBits::e1;	
+	multisamplingCreateInfo.rasterizationSamples = msaaSamples;
+	multisamplingCreateInfo.minSampleShading = 0.2f;
 
 	// -- BLENDING --		
 	// How to blend a new color being written to the fragment, with the old value
@@ -914,13 +930,14 @@ void VulkanRenderer::createRenderPass()
 {
 	vk::RenderPassCreateInfo renderPassCreateInfo{};
 
+	
 	// Attachement description : describe color buffer output, depth buffer output... 
 	// e.g. (location = 0) in the fragment shader is the first attachment
 	vk::AttachmentDescription colorAttachment{};
 	// Format to use for attachment
 	colorAttachment.format = swapchainImageFormat;			
 	// Number of samples t write for multisampling
-	colorAttachment.samples = vk::SampleCountFlagBits::e1;		
+	colorAttachment.samples = msaaSamples;		
 	// What to do with attachement before renderer. Here, clear when we start the render pass.
 	colorAttachment.loadOp = vk::AttachmentLoadOp::eClear;		
 	// What to do with attachement after renderer. Here, store the render pass.
@@ -936,7 +953,7 @@ void VulkanRenderer::createRenderPass()
 	// Image data layout before render pass starts
 	colorAttachment.initialLayout = vk::ImageLayout::eUndefined;
 	// Image data layout after render pass
-	colorAttachment.finalLayout = vk::ImageLayout::ePresentSrcKHR;	
+	colorAttachment.finalLayout = vk::ImageLayout::eColorAttachmentOptimal;
 
 
 	// Depth attachment of renderpass
@@ -948,7 +965,7 @@ void VulkanRenderer::createRenderPass()
 		vk::Format::eD24UnormS8Uint
 	};
 	depthAttachment.format = chooseSupportedFormat(formats, vk::ImageTiling::eOptimal, vk::FormatFeatureFlagBits::eDepthStencilAttachment);
-	depthAttachment.samples = vk::SampleCountFlagBits::e1;
+	depthAttachment.samples = msaaSamples;
 	// Clear when we start the render pass.
 	depthAttachment.loadOp = vk::AttachmentLoadOp::eClear;
 	// We do not do anything after depth buffer image is calculated
@@ -958,12 +975,24 @@ void VulkanRenderer::createRenderPass()
 	depthAttachment.initialLayout = vk::ImageLayout::eUndefined;
 	depthAttachment.finalLayout = vk::ImageLayout::eDepthStencilAttachmentOptimal;
 
-	array<vk::AttachmentDescription, 2> renderPassAttachments{
-		colorAttachment, depthAttachment
-	};
-	renderPassCreateInfo.attachmentCount = static_cast<uint32_t>(renderPassAttachments.size());
-	renderPassCreateInfo.pAttachments = renderPassAttachments.data();
+	
+	// Color resolve attachment
+	vk::AttachmentDescription colorAttachmentResolve{};
+	colorAttachmentResolve.format = swapchainImageFormat;
+	colorAttachmentResolve.samples = vk::SampleCountFlagBits::e1;
+	colorAttachmentResolve.loadOp = vk::AttachmentLoadOp::eDontCare;
+	colorAttachmentResolve.storeOp = vk::AttachmentStoreOp::eStore;
+	colorAttachmentResolve.stencilLoadOp = vk::AttachmentLoadOp::eDontCare;
+	colorAttachmentResolve.stencilStoreOp = vk::AttachmentStoreOp::eDontCare;
+	colorAttachmentResolve.initialLayout = vk::ImageLayout::eUndefined;
+	colorAttachmentResolve.finalLayout = vk::ImageLayout::ePresentSrcKHR;
 
+	array<vk::AttachmentDescription, 3> renderPassAttachments{
+		colorAttachment, depthAttachment, colorAttachmentResolve };
+	renderPassCreateInfo.attachmentCount =
+	static_cast<uint32_t>(renderPassAttachments.size());
+	renderPassCreateInfo.pAttachments = renderPassAttachments.data();
+	
 	// -- REFERENCES --
 	// Attachment reference uses an attachment index that refers to index
 	// in the attachement list passed to renderPassCreateInfo
@@ -972,9 +1001,15 @@ void VulkanRenderer::createRenderPass()
 	// Layout of the subpass (between initial and final layout)
 	colorAttachmentReference.layout = vk::ImageLayout::eColorAttachmentOptimal;
 
+	
+
 	vk::AttachmentReference depthAttachmentReference{};
 	depthAttachmentReference.attachment = 1;
 	depthAttachmentReference.layout = vk::ImageLayout::eDepthStencilAttachmentOptimal;
+
+	vk::AttachmentReference colorAttachmentResolveReference{};
+	colorAttachmentResolveReference.attachment = 2;
+	colorAttachmentResolveReference.layout = vk::ImageLayout::eColorAttachmentOptimal;
 
 	// -- SUBPASSES --
 	// Subpass description, will reference attachements
@@ -985,6 +1020,7 @@ void VulkanRenderer::createRenderPass()
 	subpass.colorAttachmentCount = 1;
 	subpass.pColorAttachments = &colorAttachmentReference;
 	subpass.pDepthStencilAttachment = &depthAttachmentReference;
+	subpass.pResolveAttachments = &colorAttachmentResolveReference;
 
 	renderPassCreateInfo.subpassCount = 1;
 	renderPassCreateInfo.pSubpasses = &subpass;
@@ -1030,8 +1066,9 @@ void VulkanRenderer::createFramebuffers()
 	for (size_t i = 0; i < swapchainFramebuffers.size(); ++i)
 	{
 		// Setup attachments
-		array<vk::ImageView, 2> attachments{ swapchainImages[i].imageView, depthBufferImageView };
-
+		array<vk::ImageView, 3> attachments{
+			colorImageView, depthBufferImageView, swapchainImages[i].imageView
+			};
 		// Create info
 		vk::FramebufferCreateInfo framebufferCreateInfo{};
 		// Render pass layout the framebuffer will be used with
@@ -1402,8 +1439,10 @@ void VulkanRenderer::createPushConstantRange()
 	pushConstantRange.size = sizeof(Model);
 }
 
-vk::Image VulkanRenderer::createImage(uint32_t width, uint32_t height, uint32_t mipLevels, vk::Format format, vk::ImageTiling tiling, 
-	vk::ImageUsageFlags useFlags, vk::MemoryPropertyFlags propFlags, vk::DeviceMemory* imageMemory)
+vk::Image VulkanRenderer::createImage(uint32_t width, uint32_t height, uint32_t mipLevels,
+										vk::SampleCountFlagBits numSamples, vk::Format format, vk::ImageTiling tiling,
+										vk::ImageUsageFlags useFlags, vk::MemoryPropertyFlags propFlags,
+										vk::DeviceMemory* imageMemory)
 {
 	vk::ImageCreateInfo imageCreateInfo{};
 	imageCreateInfo.imageType = vk::ImageType::e2D;
@@ -1422,7 +1461,7 @@ vk::Image VulkanRenderer::createImage(uint32_t width, uint32_t height, uint32_t 
 	// Bit flags defining what image will be used for
 	imageCreateInfo.usage = useFlags;
 	// Number of samples for multi sampling
-	imageCreateInfo.samples = vk::SampleCountFlagBits::e1;
+	imageCreateInfo.samples = numSamples;
 	// Whether image can be shared between queues (no)
 	imageCreateInfo.sharingMode = vk::SharingMode::eExclusive;
 
@@ -1487,10 +1526,11 @@ void VulkanRenderer::createDepthBufferImage()
 		vk::FormatFeatureFlagBits::eDepthStencilAttachment);
 
 	// Create image and image view
-	depthBufferImage = createImage(swapchainExtent.width, swapchainExtent.height,
-	1, depthFormat, vk::ImageTiling::eOptimal,
-	vk::ImageUsageFlagBits::eDepthStencilAttachment,
-	vk::MemoryPropertyFlagBits::eDeviceLocal, &depthBufferImageMemory);
+	depthBufferImage = createImage(swapchainExtent.width, swapchainExtent.height, 1,
+									msaaSamples, depthFormat, vk::ImageTiling::eOptimal,
+									vk::ImageUsageFlagBits::eDepthStencilAttachment,
+									vk::MemoryPropertyFlagBits::eDeviceLocal,
+									&depthBufferImageMemory);
 
 	depthBufferImageView = createImageView(depthBufferImage, depthFormat, vk::ImageAspectFlagBits::eDepth, 1);
 }
@@ -1540,7 +1580,7 @@ int VulkanRenderer::createTextureImage(const std::string& filename, uint32_t& mi
 	// Create image to hold final texture
 	vk::Image texImage;
 	vk::DeviceMemory texImageMemory;
-	texImage = createImage(width, height, mipLevels, vk::Format::eR8G8B8A8Unorm,
+	texImage = createImage(width, height, mipLevels, vk::SampleCountFlagBits::e1, vk::Format::eR8G8B8A8Unorm,
 		vk::ImageTiling::eOptimal,vk::ImageUsageFlagBits::eTransferDst |
 		vk::ImageUsageFlagBits::eSampled | vk::ImageUsageFlagBits::eTransferSrc,
 		vk::MemoryPropertyFlagBits::eDeviceLocal, &texImageMemory);
@@ -1660,4 +1700,14 @@ int VulkanRenderer::createMeshModel(const std::string& filename)
 	meshModels.push_back(meshModel);
 
 	return meshModels.size() - 1;
+}
+
+void VulkanRenderer::createColorBufferImage()
+{
+	vk::Format colorFormat = swapchainImageFormat;
+	colorImage = createImage(swapchainExtent.width, swapchainExtent.height, 1,
+	msaaSamples, colorFormat, vk::ImageTiling::eOptimal,
+	vk::ImageUsageFlagBits::eTransientAttachment | vk::ImageUsageFlagBits::eColorAttachment,
+	vk::MemoryPropertyFlagBits::eDeviceLocal, &colorImageMemory);
+	colorImageView = createImageView(colorImage, colorFormat, vk::ImageAspectFlagBits::eColor,1);
 }
