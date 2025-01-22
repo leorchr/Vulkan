@@ -13,12 +13,30 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Ressources">
+      <UniqueIdentifier>{8697b278-0b47-4887-ba3e-0e3d87c3f8f3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ressources\Shaders">
+      <UniqueIdentifier>{71cae846-8c77-4a25-8ab1-bf6972b3fad6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ressources\Models">
+      <UniqueIdentifier>{61fd49d6-8288-4f65-858d-9db02442309f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Ressources\Textures">
+      <UniqueIdentifier>{1368f96f-ee3b-422e-8ee0-258a7ad19728}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="VulkanRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="VulkanMeshModel.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -29,5 +47,65 @@
     <ClInclude Include="VulkanUtilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="VulkanMesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="VulkanMeshModel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Ressources\Models\12221_Cat_v1_l3.mtl">
+      <Filter>Ressources\Models</Filter>
+    </None>
+    <None Include="Ressources\Models\Futuristic combat jet.mtl">
+      <Filter>Ressources\Models</Filter>
+    </None>
+    <None Include="Ressources\Shaders\compileShaders.bat">
+      <Filter>Ressources\Shaders</Filter>
+    </None>
+    <None Include="Ressources\Shaders\shader1.frag">
+      <Filter>Ressources\Shaders</Filter>
+    </None>
+    <None Include="Ressources\Shaders\shader1.frag.spv">
+      <Filter>Ressources\Shaders</Filter>
+    </None>
+    <None Include="Ressources\Shaders\shader1.vert">
+      <Filter>Ressources\Shaders</Filter>
+    </None>
+    <None Include="Ressources\Shaders\shader1.vert.spv">
+      <Filter>Ressources\Shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="Ressources\Models\12221_Cat_v1_l3.obj">
+      <Filter>Ressources\Models</Filter>
+    </Object>
+    <Object Include="Ressources\Models\Futuristic combat jet.obj">
+      <Filter>Ressources\Models</Filter>
+    </Object>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Ressources\Textures\Aircraft C.jpg">
+      <Filter>Ressources\Textures</Filter>
+    </Image>
+    <Image Include="Ressources\Textures\Aircraft N.jpg">
+      <Filter>Ressources\Textures</Filter>
+    </Image>
+    <Image Include="Ressources\Textures\Aircraft S.jpg">
+      <Filter>Ressources\Textures</Filter>
+    </Image>
+    <Image Include="Ressources\Textures\cat.jpg">
+      <Filter>Ressources\Textures</Filter>
+    </Image>
+    <Image Include="Ressources\Textures\Cat_bump.jpg">
+      <Filter>Ressources\Textures</Filter>
+    </Image>
+    <Image Include="Ressources\Textures\Cat_diffuse.jpg">
+      <Filter>Ressources\Textures</Filter>
+    </Image>
+    <Image Include="Ressources\Textures\REF 1.jpg">
+      <Filter>Ressources\Textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>

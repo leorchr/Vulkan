@@ -52,7 +52,7 @@ int main()
 	float deltaTime = 0.0f;
 	float lastTime = 0.0f;
 	// Load model
-	int modelId = vulkanRenderer.createMeshModel("Ressources/Models/Futuristic combat jet.obj"); // Name of your object
+	int modelId = vulkanRenderer.createMeshModel("Ressources/Models/12221_Cat_v1_l3.obj"); // Name of your object
 	
 	while (!glfwWindowShouldClose(window))
 	{
@@ -64,9 +64,15 @@ int main()
 		if (angle > 360.0f) { angle -= 360.0f; }
 		glm::mat4 rotationModelMatrix(1.0f);
 		rotationModelMatrix = glm::translate(rotationModelMatrix,
-		glm::vec3(-0.0f, 0.0f, -1.0f));
+		glm::vec3(0.0f, -3.0f, 0.0f));
+		rotationModelMatrix = glm::rotate(rotationModelMatrix, glm::radians(-90.0f),
+		glm::vec3(1.0f, 0.0f, 0.0f));
+
 		rotationModelMatrix = glm::rotate(rotationModelMatrix, glm::radians(angle),
-		glm::vec3(0.0f, 1.0f, 0.0f));
+		glm::vec3(0.0f, 0.0f, 1.0f));
+
+		rotationModelMatrix = glm::scale(rotationModelMatrix,
+		glm::vec3(0.2f, 0.2f, 0.2f));
 		vulkanRenderer.updateModel(modelId, rotationModelMatrix);
 		vulkanRenderer.draw();
 	}

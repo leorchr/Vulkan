@@ -161,6 +161,24 @@
     <Content Include="Ressources\Shaders\shader1.vert.spv" />
     <Content Include="Ressources\Shaders\vert.spv" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="Ressources\Models\12221_Cat_v1_l3.mtl" />
+    <None Include="Ressources\Models\Futuristic combat jet.mtl" />
+    <None Include="Ressources\Shaders\compileShaders.bat" />
+    <None Include="Ressources\Shaders\shader1.frag" />
+    <None Include="Ressources\Shaders\shader1.frag.spv" />
+    <None Include="Ressources\Shaders\shader1.vert" />
+    <None Include="Ressources\Shaders\shader1.vert.spv" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Ressources\Textures\Aircraft C.jpg" />
+    <Image Include="Ressources\Textures\Aircraft N.jpg" />
+    <Image Include="Ressources\Textures\Aircraft S.jpg" />
+    <Image Include="Ressources\Textures\cat.jpg" />
+    <Image Include="Ressources\Textures\Cat_bump.jpg" />
+    <Image Include="Ressources\Textures\Cat_diffuse.jpg" />
+    <Image Include="Ressources\Textures\REF 1.jpg" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
