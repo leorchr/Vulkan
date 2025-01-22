@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)Externals\Includes\assimp;$(SolutionDir)Externals\Includes\GLFW;$(SolutionDir)Externals\Includes\glm;C:\VulkanSDK\Include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Externals\Includes\assimp;$(SolutionDir)Externals\Includes\GLFW;$(SolutionDir)Externals\Includes\glm;C:\VulkanSDK\Include;$(SolutionDir)Externals\Includes\stb;$(IncludePath)</IncludePath>
     <LibraryPath>$(SolutionDir)Externals\Librairies\assimp;$(SolutionDir)Externals\Librairies\GLFW;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -143,17 +143,23 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="VulkanMesh.cpp" />
+    <ClCompile Include="VulkanMeshModel.cpp" />
     <ClCompile Include="VulkanRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="VulkanMesh.h" />
+    <ClInclude Include="VulkanMeshModel.h" />
     <ClInclude Include="VulkanRenderer.h" />
     <ClInclude Include="VulkanUtilities.h" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Shaders\compileShaders.bat" />
-    <Content Include="Shaders\shader.frag" />
-    <Content Include="Shaders\shader.vert" />
+    <Content Include="Ressources\Shaders\compileShaders.bat" />
+    <Content Include="Ressources\Shaders\frag.spv" />
+    <Content Include="Ressources\Shaders\shader1.frag" />
+    <Content Include="Ressources\Shaders\shader1.frag.spv" />
+    <Content Include="Ressources\Shaders\shader1.vert" />
+    <Content Include="Ressources\Shaders\shader1.vert.spv" />
+    <Content Include="Ressources\Shaders\vert.spv" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
