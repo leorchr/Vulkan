@@ -71,11 +71,11 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)Externals\Includes\assimp;$(SolutionDir)Externals\Includes\GLFW;$(SolutionDir)Externals\Includes\glm;$(SolutionDir)Externals\Includes\vulkan;$(SolutionDir)Externals\Includes\stb;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Externals\Includes\assimp;$(SolutionDir)Externals\Includes\GLFW;$(SolutionDir)Externals\Includes\glm;$(SolutionDir)Externals\Includes\vulkan;$(SolutionDir)Externals\Includes\stb</IncludePath>
     <LibraryPath>$(SolutionDir)Externals\Librairies\assimp;$(SolutionDir)Externals\Librairies\GLFW;$(SolutionDir)Externals\Librairies\vulkan;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)Externals\Includes\assimp;$(SolutionDir)Externals\Includes\GLFW;$(SolutionDir)Externals\Includes\glm;$(SolutionDir)Externals\Includes\vulkan;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Externals\Includes\assimp;$(SolutionDir)Externals\Includes\GLFW;$(SolutionDir)Externals\Includes\glm;$(SolutionDir)Externals\Includes\vulkan;$(SolutionDir)Externals\Includes\stb</IncludePath>
     <LibraryPath>$(SolutionDir)Externals\Librairies\assimp;$(SolutionDir)Externals\Librairies\GLFW;$(SolutionDir)Externals\Librairies\vulkan;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

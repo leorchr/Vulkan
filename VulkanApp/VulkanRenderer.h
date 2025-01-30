@@ -32,10 +32,10 @@ struct ViewProjection
 class VulkanRenderer
 {
 public:
-#ifdef NDEBUG
+#ifdef _DEBUG
 	static const bool enableValidationLayers = false;
 #else
-	static const bool enableValidationLayers = true;
+	static const bool enableValidationLayers = false;
 #endif
 	static const vector<const char*> validationLayers;
 
