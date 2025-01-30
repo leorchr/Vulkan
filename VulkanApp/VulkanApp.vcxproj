@@ -71,12 +71,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(SolutionDir)Externals\Includes\assimp;$(SolutionDir)Externals\Includes\GLFW;$(SolutionDir)Externals\Includes\glm;C:\VulkanSDK\Include;$(SolutionDir)Externals\Includes\stb;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Externals\Librairies\assimp;$(SolutionDir)Externals\Librairies\GLFW;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)Externals\Includes\assimp;$(SolutionDir)Externals\Includes\GLFW;$(SolutionDir)Externals\Includes\glm;$(SolutionDir)Externals\Includes\vulkan;$(SolutionDir)Externals\Includes\stb;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Externals\Librairies\assimp;$(SolutionDir)Externals\Librairies\GLFW;$(SolutionDir)Externals\Librairies\vulkan;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <IncludePath>$(SolutionDir)Externals\Includes\assimp;$(SolutionDir)Externals\Includes\GLFW;$(SolutionDir)Externals\Includes\glm;C:\VulkanSDK\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)Externals\Librairies\assimp;$(SolutionDir)Externals\Librairies\GLFW;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(SolutionDir)Externals\Includes\assimp;$(SolutionDir)Externals\Includes\GLFW;$(SolutionDir)Externals\Includes\glm;$(SolutionDir)Externals\Includes\vulkan;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)Externals\Librairies\assimp;$(SolutionDir)Externals\Librairies\GLFW;$(SolutionDir)Externals\Librairies\vulkan;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -118,7 +118,8 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>glfw3.lib;assimp-vc143-mtd.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\VulkanSDK\Lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -137,7 +138,8 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>glfw3.lib;assimp-vc143-mtd.lib;vulkan-1.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>C:\VulkanSDK\Lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

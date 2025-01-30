@@ -78,14 +78,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Object Include="Ressources\Models\12221_Cat_v1_l3.obj">
-      <Filter>Ressources\Models</Filter>
-    </Object>
-    <Object Include="Ressources\Models\Futuristic combat jet.obj">
-      <Filter>Ressources\Models</Filter>
-    </Object>
-  </ItemGroup>
-  <ItemGroup>
     <Image Include="Ressources\Textures\Aircraft C.jpg">
       <Filter>Ressources\Textures</Filter>
     </Image>
